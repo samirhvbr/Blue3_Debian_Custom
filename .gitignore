@@ -1,0 +1,94 @@
+# =============================================
+# Blue3_Debian_Custom - .gitignore
+# Ignora arquivos grandes, temporários e gerados
+# =============================================
+
+# === Arquivos ISO e imagens grandes (nunca versionar) ===
+*.iso
+*.img
+*.raw
+*.qcow2
+*.vdi
+*.vmdk
+
+# === Diretórios de trabalho da construção da ISO ===
+isofiles/
+build/
+tmp/
+work/
+extracted-iso/
+custom-iso/
+
+# === Arquivos gerados durante o build ===
+debian-*.iso
+debian-custom-*.iso
+debian-custom-preseed.iso
+*.list
+*.manifest
+
+# === Arquivos temporários do sistema ===
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === Logs e caches ===
+*.log
+.cache/
+*.tmp
+
+# === Arquivos sensíveis (senhas, chaves, etc.) ===
+preseed.cfg.bak
+*.bak
+secrets/
+*.key
+*.pem
+
+# === Diretório blue3 com scripts (se quiser versionar só alguns) ===
+# Se você já versiona a pasta blue3 inteira, pode remover esta linha
+# blue3/
+
+# === Outros arquivos do GitHub / VSCode / editores ===
+.vscode/
+.idea/
+*.code-workspace
+
+
+*.log
+*.iso
+/node_modules
+.DS_Store
+.env
+/.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+/storage/logs/*
+/storage/framework/*
+/bootstrap/cache/*
+npm-debug.log
+yarn-error.log
+composer.phar
+package-lock.json
+/.vite
+/old
+/isofiles
