@@ -1,48 +1,39 @@
 #!/bin/bash
 
-# pegando o uptime do servidor
-upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
-secs=$((${upSeconds}%60))
-mins=$((${upSeconds}/60%60))
-hours=$((${upSeconds}/3600%24))
-days=$((${upSeconds}/86400))
-UPTIME=`printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs"`
+# Garante ambiente mínimo
+export TERM=${TERM:-xterm-256color}
 
-# pegando o load averages dos proc
-read one five fifteen rest < /proc/loadavg
+# Função segura para cores
+color() {
+    tput setaf "$1" 2>/dev/null || true
+}
 
-# demora muito para ler o ip
-# IP Addresses.......: `ip a | grep glo | awk '{print $2}' | head -1 | cut -f1 -d/`
+# uptime
+upSeconds="$(cut -d. -f1 /proc/uptime)"
+secs=$((upSeconds%60))
+mins=$((upSeconds/60%60))
+hours=$((upSeconds/3600%24))
+days=$((upSeconds/86400))
+UPTIME=$(printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs")
 
-# modelo de CPU
-# cat /proc/cpuinfo |grep 'model name' |awk -F ":" '{print substr($2,2,300)}'
-# cat /proc/cpuinfo |grep 'model name' |awk -F ":" '{print substr($2,2,300)}' |sed -n -e 1p
+# load
+read one five fifteen _ < /proc/loadavg
 
-#echo -e "\033[93m"
-#echo "IPs"
-#ip addr show |grep inet |awk '{print $2}' |sed -n -e 3,8p
+# cores
+blue="\033[34m"
+white="\033[97m"
+red=$(color 1)
 
 echo -e "
-\033[34m
+${blue}
                                     BLUE3 INTERNET
- ____  _            ____            `date +"%A, %e %B %Y, %R:%S"`
-|  _ \| |          |___ \\           `uname -srmo `$(tput setaf 1)
+ ____  _            ____            $(date +"%A, %e %B %Y, %R:%S")
+|  _ \| |          |___ \\           $(uname -srmo)
 | |_) | |_   _  ___  __) |
 |  _ <| | | | |/ _ \|__ <           Uptime.............: ${UPTIME}
-| |_) | | |_| |  __/___) |          Memory.............: `cat /proc/meminfo |grep MemFree |awk {'print $2'}`kB (Free) / `cat /proc/meminfo | grep MemTotal | awk {'print $2'}`kB (Total)
-|____/|_|\__,_|\___|____/           CPU Info...........: `cat /proc/cpuinfo |grep 'model name' |awk -F ":" '{print substr($2,2,300)}' |sed -n -e 1p`
+| |_) | | |_| |  __/___) |          Memory.............: $(awk '/MemFree/ {print $2}' /proc/meminfo)kB (Free) / $(awk '/MemTotal/ {print $2}' /proc/meminfo)kB (Total)
+|____/|_|\__,_|\___|____/           CPU Info...........: $(awk -F: '/model name/ {print substr($2,2); exit}' /proc/cpuinfo)
                                     CPU Load...........: ${one}, ${five}, ${fifteen} (1, 5, 15 min)
-                                    
-\033[97m
+
+${white}
 "
-#				    Running Processes..: `ps ax | wc -l | tr -d " "`
-#                                   IP Addresses IPv4..: `ip addr show |grep inet |awk '{print $2}' |sed -n -e 3,3p`
-#                                   IP Addresses.IPv6..: `ip addr show |grep inet |awk '{print $2}' |sed -n -e 4,4p`
-#				    IP Addresses Pub...: `curl -s "https://ifconfig.me/ip"`
-#
-#				    Time Zone..........: `curl ipinfo.io/timezone`
-#				    Local..............: `curl ipinfo.io/city`
-#				    Organization.......: `curl -s "https://ipinfo.io/org" |awk '{print $2,$3}'`
-#				    ASN................: `curl -s "https://ipinfo.io/org" |awk '{print $1}'`
-#for i in {16..21} {21..16} ; do echo -en "\e[38;5;${i}m  B3  \e[0m" ; done ; echo
-for i in {16..21} {21..16} ; do echo -en "\e[48;5;${i}m     \e[0m" ; done ; echo ; echo 
