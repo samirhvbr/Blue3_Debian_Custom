@@ -9,15 +9,17 @@
 # Version: 2.01
 # ===================================================================
 #
-
-# SETDEF -e
 set -e
+
+
 
 # ==========================
 # VARIÁVEIS
 # ==========================
 BASE_DIR="/home/samir/Webs/b3files/www/files.b3.rs/blue3/debian_blue3_iso"
-ISO_ORIG="$BASE_DIR/debian-13.4.0-amd64-netinst.iso"
+BUILD_USER="${BUILD_USER:-$USER}"
+BUILD_GROUP="${BUILD_GROUP:-$USER}"
+ISO_ORIG="$BASE_DIR/debian.iso"
 ISO_WORK="$BASE_DIR/isofiles"
 BLUE3_DIR="$ISO_WORK/blue3"
 CUSTOM_DIR="$BASE_DIR/blue3"
@@ -28,19 +30,36 @@ ISO_OUT="$BASE_DIR/blue3-debian-${DATA}.iso"
 
 echo "[+] Iniciando build Blue3 em $(date)" | tee -a "$LOG"
 
+
+
+# ==========================
+# VALIDACAO DA ISO BASE
+# ==========================
+if [ ! -f "$ISO_ORIG" ]; then
+    echo "[ERRO] ISO base nao encontrada: $ISO_ORIG" | tee -a "$LOG"
+    echo "[ERRO] Coloque a imagem Debian neste diretorio com o nome debian.iso e execute novamente." | tee -a "$LOG"
+    exit 1
+fi
+
+
+
 # ==========================
 # LIMPEZA
 # ==========================
 sudo rm -rf "$ISO_WORK" "$ISO_OUT"
 mkdir -p "$ISO_WORK" "$BLUE3_DIR"
 
+
+
 # ==========================
 # EXTRAIR ISO
 # ==========================
 echo "[+] Extraindo ISO..." | tee -a "$LOG"
 xorriso -osirrox on -indev "$ISO_ORIG" -extract / "$ISO_WORK/" >> "$LOG" 2>&1
-sudo chown -R $USER:$USER "$ISO_WORK"
+sudo chown -R "$BUILD_USER:$BUILD_GROUP" "$ISO_WORK"
 chmod -R u+w "$ISO_WORK"
+
+
 
 # ==========================
 # COPIAR BLUE3
@@ -52,28 +71,16 @@ cp -a "$CUSTOM_DIR/"* "$BLUE3_DIR/" 2>/dev/null || true
 touch "$BLUE3_DIR/motd"
 
 # CORRECAO
-sudo chown -R $USER:$USER "$BLUE3_DIR"
+sudo chown -R "$BUILD_USER:$BUILD_GROUP" "$BLUE3_DIR"
 sudo chmod -R u+rw "$BLUE3_DIR"
 # Corrige permissões de TODOS arquivos (inclusive ssh)
 find "$BLUE3_DIR" -type f -exec chmod 644 {} \;
 find "$BLUE3_DIR" -type d -exec chmod 755 {} \;
 # Garante que você é dono
-sudo chown -R $USER:$USER "$BLUE3_DIR"
+sudo chown -R "$BUILD_USER:$BUILD_GROUP" "$BLUE3_DIR"
 
 sudo chmod 644 "$BLUE3_DIR/"* 2>/dev/null || true
 sudo chmod +x "$BLUE3_DIR/10-uname" "$BLUE3_DIR/20-blue3" 2>/dev/null || true
-
-
-
-
-
-
-
-
-
-
-
-
 
 # VERIFICACAO DO PRESEED
 echo "[+] Verificando preseed..." | tee -a "$LOG"
@@ -83,12 +90,6 @@ else
     echo "[ERRO] preseed.cfg NÃO encontrado!" | tee -a "$LOG"
     exit 1
 fi
-
-
-
-
-
-
 
 
 
@@ -123,6 +124,7 @@ for initrd in "$INITRD_GZ" "$INITRD_GTK"; do
         echo "[+] initrd $(basename $initrd) limpo com sucesso" | tee -a "$LOG"
     fi
 done
+
 
 
 # ==========================
@@ -171,25 +173,6 @@ done
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ==========================
 # MD5SUM
 # ==========================
@@ -225,5 +208,5 @@ echo "[+] ISO gerada: $ISO_OUT" | tee -a "$LOG"
 echo "[+] Finalizado em $(date)" | tee -a "$LOG"
 
 # RESOLVENDO
-sudo chown samir:samir "$ISO_OUT"
+sudo chown "$BUILD_USER:$BUILD_GROUP" "$ISO_OUT"
 echo "[+] ISO permissao ok: $ISO_OUT" | tee -a "$LOG"
