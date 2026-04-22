@@ -58,6 +58,11 @@ BUILD_USER=outro_usuario BUILD_GROUP=outro_grupo bash script-iso.sh
 │   ├── preseed.cfg
 │   ├── sources.list
 │   └── ssh/
+|       ├── ipauth.conf
+|       ├── keyregeneration.conf
+|       ├── thosts.conf
+|       ├── sshd_config
+|       └── useprivilegeseparation.conf
 ├── script-iso.sh
 ├── debian.iso
 ├── README.md
@@ -130,9 +135,8 @@ Durante a instalacao, a configuracao de rede automatica e bloqueada para nao int
 
 - Hostname: `blue3`
 - Dominio: `b3.local`
-- IPv4: `100.64.66.88/24`
-- Gateway: `100.64.66.1`
-- DNS: `100.64.66.231 1.1.1.1`
+- IPv4: desabilitado
+- DNS: `170.233.231.231 170.233.231.232`
 - IPv6: desabilitado
 
 ### Mirror e pacotes
@@ -151,7 +155,7 @@ Para uso realmente offline, o ideal e usar uma ISO Debian que ja contenha os pac
 - Define o usuario `samir` com UID `1000`
 - As senhas ficam gravadas em hash dentro do preseed
 
-Observacao: os comentarios do arquivo indicam senha padrao `pwblue3`. Se isso for mantido fora de ambiente controlado, o ideal e trocar esse segredo antes de publicar ou usar em producao.
+Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for mantido fora de ambiente controlado, o ideal e trocar esse segredo antes de publicar ou usar em producao.
 
 ### Fuso e horario
 
@@ -161,17 +165,17 @@ Observacao: os comentarios do arquivo indicam senha padrao `pwblue3`. Se isso fo
 ### Particionamento automatico
 
 - Disco alvo: `/dev/sda`
-- Volume group: `vgsys00`
+- Volume group: `vg0`
+- Espaço Minimo: 24GB
 - Layout:
   - EFI em GPT para boot UEFI
   - `/boot` em `ext4`
   - `swap` em LVM
-  - `/` em `xfs`
-  - `/var` em `btrfs`
-  - `/tmp` em `btrfs`
-  - `/spare` em `btrfs`
-
-Observacao: o layout atual nao cria mais `/var/log` em volume separado.
+  - `/` em LVM `xfs`
+  - `/var` em LVM `btrfs`
+  - `/var/log` em LVM `btrfs`
+  - `/tmp` em LVM `btrfs`
+  - `/spare` em LVM `btrfs`
 
 ## Arquivos Blue3 aplicados no `late_command`
 
@@ -202,7 +206,7 @@ Acoes finais executadas:
 Pacotes esperados no host de build:
 
 ```bash
-apt install xorriso isolinux syslinux-utils cpio gzip
+sudo apt install xorriso isolinux syslinux-utils cpio gzip
 ```
 
 Tambem sao usados `md5sum`, `find`, `sed`, `xargs` e permissao `sudo` para limpeza e ajuste de ownership.
@@ -215,7 +219,7 @@ Tambem sao usados `md5sum`, `find`, `sed`, `xargs` e permissao `sudo` para limpe
 
 ```bash
 cd /home/samir/Webs/b3files/www/files.b3.rs/blue3/debian_blue3_iso
-bash script-iso.sh
+sudo bash script-iso.sh
 ```
 
 Saida esperada:
