@@ -1,4 +1,4 @@
-# Blue3 Debian Custom ISO
+# Blue3 Debian ISO Custom
 
 Projeto para gerar uma ISO customizada do Debian com instalacao automatizada via preseed e arquivos de configuracao Blue3 embutidos.
 
@@ -192,7 +192,10 @@ Ao final da instalacao, o `late_command` copia arquivos da ISO para o sistema in
 | `blue3/bashrc` | `/root/.bashrc` | ambiente do root |
 | `blue3/bashrc` | `/home/samir/.bashrc` | ambiente do usuario `samir` |
 | `blue3/ssh/sshd_config` | `/etc/ssh/sshd_config` | configuracao principal do SSH |
-| `blue3/ssh/*.conf` | `/etc/ssh/sshd_config.d/` | complementos de configuracao SSH |
+| `blue3/ssh/ipauth.conf` | `/etc/ssh/sshd_config.d/ipauth.conf` | IPs que permitem o acesso direto com usuario root |
+| `blue3/ssh/keyregeneration.conf` | `/etc/ssh/sshd_config.d/keyregeneration.conf` | Lifetime e tamanho (verão 1) |
+| `blue3/ssh/rhosts.conf` | `/etc/ssh/sshd_config.d/rhosts.conf` | Configurações de permissões de hosts |
+| `blue3/ssh/useprivilegeseparation.conf` | `/etc/ssh/sshd_config.d/useprivilegeseparation.conf` | Separação de previlégios |
 
 Acoes finais executadas:
 

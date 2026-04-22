@@ -53,6 +53,7 @@ secrets/
 .vscode/
 .idea/
 *.code-workspace
+.git*
 
 
 *.log
