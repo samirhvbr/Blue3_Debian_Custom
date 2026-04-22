@@ -164,9 +164,13 @@ Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for 
 
 ### Particionamento automatico
 
+- Lembrando que a finalidade é um servidor sem ambiente gráfico, utilizando apenas o mínimo necessário em cada partição. O restante do espaço físico permanece livre no VG do LVM, podendo ser utilizado posteriormente para ajustes nas partições. O uso de /var, /log e /tmp em Btrfs permite aplicar compactação de arquivos.
+- A separação do diretório /var/log em uma partição dedicada tem como objetivo evitar que o crescimento excessivo de arquivos de log comprometa o funcionamento do sistema.
+- A separação do diretório /tmp permite aplicar diretamente no /etc/fstab opções de segurança, como restrições de execução e outras proteções.
+
 - Disco alvo: `/dev/sda`
 - Volume group: `vg0`
-- Espaço Minimo: 24GB
+- Espaço Minimo: 20GB
 - Layout:
   - EFI em GPT para boot UEFI
   - `/boot` em `ext4`
@@ -175,7 +179,6 @@ Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for 
   - `/var` em LVM `btrfs`
   - `/var/log` em LVM `btrfs`
   - `/tmp` em LVM `btrfs`
-  - `/spare` em LVM `btrfs`
 
 ## Arquivos Blue3 aplicados no `late_command`
 
@@ -238,3 +241,6 @@ Saida esperada:
 - O arquivo `blue3/grub.cfg` existe no projeto, mas o fluxo atual do script nao o copia diretamente para a ISO; o ajuste de boot e feito por `sed` sobre a ISO extraida.
 - O arquivo `blue3/blue3.png` existe no projeto, mas nao e manipulado diretamente pelo script atual.
 - Se a intencao for publicar isso fora de ambiente controlado, vale revisar IPs, senhas e regras de SSH antes de subir para um repositorio remoto.
+- O processo de instalação completo usando máquina virtual com 8 vCPU, 8 GB de RAM e 60 GB de SSD
+  - Windows Server 2022 - Hyper-V levou 3 minutos e 33 segundos
+  - Proxmox 9.1 levou 3 minutos e 10 segundos
