@@ -1,0 +1,23 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+#allow-hotplug eth0
+#iface eth0 inet static
+#        address 100.64.66.xxx/24
+#        gateway 100.64.66.1
+#        # dns-* options are implemented by the resolvconf package, if installed
+#        dns-nameservers 170.233.231.231 170.233.231.231 1.1.1.1
+#        dns-search b3.local
+
+#iface eth0 inet6 static
+#        pre-up modprobe ipv6
+#        address 2804:2c24:dc:1::xxxx
+#        netmask 64
+#        gateway 2804:2c24:dc:1::1

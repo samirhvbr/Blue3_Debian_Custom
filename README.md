@@ -12,7 +12,7 @@ Este diretorio guarda o material versionavel necessario para reconstruir a ISO:
 
 Artefatos de build, como `isofiles/`, `*.iso` e `custom.log`, ficam fora do versionamento pelo `.gitignore`.
 
-## Padrao de automacao
+## Padrao de Automacao
 
 Para deixar o processo o mais automatizavel possivel, a ISO base deve ficar neste diretorio com nome fixo:
 
@@ -24,7 +24,20 @@ Isso evita editar o script a cada nova imagem. Pode ser uma ISO netinst, DVD ou 
 
 O script tambem valida essa ISO logo no inicio. Se `debian.iso` nao existir, ele aborta antes da limpeza com mensagem clara no terminal e no `custom.log`.
 
-## Variaveis de ajuste rapido
+## Arquico blue3_script.sh
+
+# Objetivo
+Realizar o bootstrap inicial do servidor, obtendo automaticamente as configurações de rede a partir do phpIPAM com base no FQDN (hostname + domínio) informado pelo usuário.
+
+Arquivo de pré configuração, faz a conexão inicial para buscar no PHPIPAM pelo FQDN (hostiname + domínio) as configurações de IPv4, Netmask, Gateway e VLAN.
+
+Este script gera os arquivo /etc/hosts /etc/resolv.conf /etc/network/interfaces
+
+Atualiza o Debian e instala os apps, curl jq ipcalc vlan e git
+
+Com o GIT baixamos o script inicial de configuração de um servidor Debian padronizado pela Blue3, consultar documentação em https://github.com/samirhvbr/Linux-Start
+
+## Variaveis de Ajuste Rapido
 
 Para evitar sair procurando pontos sensiveis no script, os ajustes de usuario e grupo ficam concentrados no inicio:
 
@@ -41,17 +54,18 @@ Se outro usuario for utilizar o build, basta ajustar essas variaveis no inicio d
 BUILD_USER=outro_usuario BUILD_GROUP=outro_grupo bash script-iso.sh
 ```
 
-## Estrutura do projeto
+## Estrutura do Projeto
 
 ```text
 .
 ├── blue3/
+│   ├── blue3_script.sh
+│   ├── service.one_shot
 │   ├── 10-uname
 │   ├── 20-blue3
 │   ├── bashrc
 │   ├── blue3.png
 │   ├── grub.cfg
-│   ├── interfaces
 │   ├── issue
 │   ├── issue.net
 │   ├── motd
@@ -69,7 +83,7 @@ BUILD_USER=outro_usuario BUILD_GROUP=outro_grupo bash script-iso.sh
 └── isofiles/
 ```
 
-## Como o build funciona
+## Como o Build Funciona
 
 O fluxo atual e este:
 
@@ -85,19 +99,19 @@ O fluxo atual e este:
 
 ## O que o `script-iso.sh` monta
 
-### Entrada esperada
+### Entrada Esperada
 
 - ISO base: `debian.iso`
 - Diretorio de customizacao: `blue3/`
 
-### Estrutura gerada no build
+### Estrutura Gerada no Build
 
 - `isofiles/`: arvore temporaria com a ISO extraida
 - `isofiles/blue3/`: copia dos arquivos locais de customizacao
 - `custom.log`: log do processo de build
 - `blue3-debian-YYYYMMDD.iso`: ISO final gerada
 
-### Alteracoes feitas pelo script
+### Alteracoes Feitas pelo Script
 
 - Valida a existencia de `debian.iso` antes de iniciar a limpeza
 - Extrai a ISO original com `xorriso`
@@ -108,7 +122,7 @@ O fluxo atual e este:
 - Recalcula `md5sum.txt`
 - Gera a ISO final em modo hibrido BIOS/UEFI
 
-### Parametros de boot injetados
+### Parametros de Boot Injetados
 
 ```text
 auto=true priority=critical preseed/file=/cdrom/blue3/preseed.cfg vga=788 \
@@ -116,7 +130,7 @@ debian-installer/speech=false speakup.synth=none speakup.synth=off \
 debian-installer/disable-speech=true noaccessibility DEBCONF_DEBUG=5
 ```
 
-## O que o `blue3/preseed.cfg` configura
+## O Que o `blue3/preseed.cfg` Configura
 
 O `preseed.cfg` automatiza a instalacao e define o padrao do sistema instalado.
 
@@ -136,10 +150,11 @@ Durante a instalacao, a configuracao de rede automatica e bloqueada para nao int
 - Hostname: `blue3`
 - Dominio: `b3.local`
 - IPv4: desabilitado
-- DNS: `170.233.231.231 170.233.231.232`
+- DNS: `170.233.231.231 170.233.231.232 1.1.1.1`
 - IPv6: desabilitado
+- É copiado um arquivo default do /etc/network/interfaces para facilitar seu preenchimento posterior.
 
-### Mirror e pacotes
+### Mirror e Pacotes
 
 - Mirror configurado: `mirror.blue3.com.br/debian`
 - `apt-setup/use_mirror` esta em `false`
@@ -162,12 +177,12 @@ Para uso realmente offline, o ideal e usar uma ISO Debian que ja contenha os pac
 Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for mantido fora de ambiente controlado, o ideal e trocar esse segredo antes de publicar ou usar em producao.
 
 
-### Fuso e horario
+### Fuso e Horario
 
 - Timezone: `America/Sao_Paulo`
 - NTP: `ntp.blue3.com.br`
 
-### Particionamento automatico
+### Particionamento Automatico
 
 - Lembrando que a finalidade é um servidor sem ambiente gráfico, utilizando apenas o mínimo necessário em cada partição. O restante do espaço físico permanece livre no VG do LVM, podendo ser utilizado posteriormente para ajustes nas partições. O uso de /var, /log e /tmp em Btrfs permite aplicar compactação de arquivos.
 - A separação do diretório /var/log em uma partição dedicada tem como objetivo evitar que o crescimento excessivo de arquivos de log comprometa o funcionamento do sistema.
@@ -184,12 +199,16 @@ Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for 
   - `/var/log` em LVM `btrfs`
   - `/tmp` em LVM `btrfs`
 
-## Arquivos Blue3 aplicados no `late_command`
+## Arquivos Blue3 Aplicados no `late_command`
 
 Ao final da instalacao, o `late_command` copia arquivos da ISO para o sistema instalado.
 
 | Origem na ISO | Destino no sistema instalado | Finalidade |
 | --- | --- | --- |
+| `blue3/blue3_script.sh` | `/root/blue3_script.sh` | Script inicial para ajustes e configuracoes iniciais |
+| `blue3/.env` | `/root/.env` | Arquivo de configuração da API do PHPIPAM |
+| `blue3/.env.example`        | Arquivo de exemplo da configuração da API do PHPIPAM, configure conforme seu PHPIPAM |
+| `blue3/service.one_shot` | `/etc/systemd/system/blue3-firstboot.service` | Script inicial forçando no boot |
 | `blue3/20-blue3` | `/etc/update-motd.d/20-blue3` | MOTD dinamico da Blue3 |
 | `blue3/10-uname` | `/etc/update-motd.d/10-uname` | informacoes de sistema no login |
 | `blue3/issue.net` | `/etc/issue.net` | banner remoto |
@@ -221,7 +240,7 @@ sudo apt install xorriso isolinux syslinux-utils cpio gzip
 
 Tambem sao usados `md5sum`, `find`, `sed`, `xargs` e permissao `sudo` para limpeza e ajuste de ownership.
 
-## Como gerar a ISO
+## Como Gerar a ISO
 
 1. Coloque a ISO Debian de origem neste diretorio com o nome `debian.iso`.
 2. Confirme que `blue3/preseed.cfg` e os arquivos de `blue3/` estao atualizados.
@@ -237,7 +256,7 @@ Saida esperada:
 - ISO gerada em `blue3-debian-YYYYMMDD.iso`
 - Log salvo em `custom.log`
 
-## Observacoes importantes
+## Observacoes Importantes
 
 - O nome correto do script atual e `script-iso.sh`.
 - Os `chown` do processo usam as variaveis `BUILD_USER` e `BUILD_GROUP` definidas no inicio do script.

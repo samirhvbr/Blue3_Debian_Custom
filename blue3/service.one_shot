@@ -1,0 +1,11 @@
+[Unit]
+Description=Blue3 First Boot Script
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/blue3_script.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
