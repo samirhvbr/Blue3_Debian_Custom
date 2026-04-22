@@ -191,7 +191,6 @@ Ao final da instalacao, o `late_command` copia arquivos da ISO para o sistema in
 | `blue3/issue.net` | `/etc/issue.net` | banner remoto |
 | `blue3/issue` | `/etc/issue` | banner local |
 | `blue3/motd` | `/etc/motd` | MOTD base |
-| `blue3/interfaces` | `/etc/network/interfaces` | modelo de rede |
 | `blue3/bashrc` | `/root/.bashrc` | ambiente do root |
 | `blue3/bashrc` | `/home/samir/.bashrc` | ambiente do usuario `samir` |
 | `blue3/ssh/sshd_config` | `/etc/ssh/sshd_config` | configuracao principal do SSH |

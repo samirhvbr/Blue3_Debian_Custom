@@ -3,10 +3,10 @@
 # ===================================================================
 # PRESEED PERSONALIZADO BLUE3
 # Instalação automatizada Debian com LVM + XFS/BTRFS
-# Debian Version: Trixie (12+1)
+# Debian Version: Trixie
 # Author: Samir Hanna Verza
 # Date: 12/04/2026
-# Version: 2.01
+# Version: 2.02
 # ===================================================================
 #
 set -e
