@@ -123,7 +123,7 @@ O `preseed.cfg` automatiza a instalacao e define o padrao do sistema instalado.
 ### Instalador
 
 - Instalacao automatica com `debconf/priority=critical`
-- Interface grafica do instalador habilitada
+- `preseed/interactive=false` para reduzir perguntas durante a instalacao
 - Fala e acessibilidade desabilitadas
 - Locale `pt_BR.UTF-8`
 - Idioma `pt`
@@ -152,10 +152,15 @@ Para uso realmente offline, o ideal e usar uma ISO Debian que ja contenha os pac
 
 - Nao cria usuario interativo durante o instalador
 - Define o usuario `root`
-- Define o usuario `samir` com UID `1000`
+- Define o usuario `samir` como usuario adicional sudo
 - As senhas ficam gravadas em hash dentro do preseed
+  - Podem ser alterada a senha default criando uma nova com o comando abaixo copiando todo o resultado e substituindo a partir do 'password'
+  ```text
+  mkpasswd -m sha-512 "sua-senha-aqui"
+  ```
 
 Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for mantido fora de ambiente controlado, o ideal e trocar esse segredo antes de publicar ou usar em producao.
+
 
 ### Fuso e horario
 
@@ -170,7 +175,6 @@ Observacao: os comentarios do arquivo indicam senha padrao `blue3`. Se isso for 
 
 - Disco alvo: `/dev/sda`
 - Volume group: `vg0`
-- Espaço Minimo: 20GB
 - Layout:
   - EFI em GPT para boot UEFI
   - `/boot` em `ext4`
@@ -205,6 +209,7 @@ Acoes finais executadas:
 - Ajusta dono da home do usuario `samir`
 - Habilita o servico `ssh`
 - Tenta marcar os scripts de `update-motd.d` como executaveis
+- Copia `sources.list` personalizado para `/etc/apt/sources.list`
 
 ## Dependencias
 
