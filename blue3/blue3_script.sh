@@ -1,4 +1,13 @@
 #!/bin/bash
+# ========================================
+# SCRIPT DE PROVISIONAMENTO BLUE3
+# AUTOR: SAMIR H.V.
+# Linux: Debian Trixie 64-bit
+# Data de criação: 2024-06-20
+# Data de edição:  2026-04-22
+# Versão: 1.20 final
+# ========================================
+
 set -e
 
 # ==========================
@@ -82,8 +91,8 @@ iface $IFACE inet static
     dns-nameservers $BOOT_DNS 170.233.231.231
 EOF
 
-ifdown $IFACE || true
-ifup $IFACE || { echo "Falha ao configurar rede bootstrap"; }
+ifdown $IFACE || { echo "Falha ao configurar rede bootstrap (ifdown)"; }
+ifup $IFACE || { echo "Falha ao configurar rede bootstrap (ifup)"; }
 sleep 2
 
 # remover imutabilidade se existir
@@ -256,11 +265,11 @@ EOF
 # ==========================
 echo "Reiniciando rede..."
 
-ifdown $IFACE || true
-ifup $IFACE || { echo "Falha ao configurar rede final"; }
+ifdown $IFACE || { echo "Falha no ifdown ao configurar rede final"; }
+ifup $IFACE || { echo "Falha no ifup ao configurar rede final"; }
 sleep 2
 
-ping -c 2 $GATEWAY || { echo "Falha rede final"; exit 1; }
+ping -c 2 $GATEWAY || { echo "Falha no ping rede final"; exit 1; }
 
 # ==========================
 # CLONE

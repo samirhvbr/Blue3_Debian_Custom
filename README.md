@@ -26,16 +26,7 @@ O script tambem valida essa ISO logo no inicio. Se `debian.iso` nao existir, ele
 
 ## Arquico blue3_script.sh
 
-# Objetivo
-Realizar o bootstrap inicial do servidor, obtendo automaticamente as configurações de rede a partir do phpIPAM com base no FQDN (hostname + domínio) informado pelo usuário.
-
-Arquivo de pré configuração, faz a conexão inicial para buscar no PHPIPAM pelo FQDN (hostiname + domínio) as configurações de IPv4, Netmask, Gateway e VLAN.
-
-Este script gera os arquivo /etc/hosts /etc/resolv.conf /etc/network/interfaces
-
-Atualiza o Debian e instala os apps, curl jq ipcalc vlan e git
-
-Com o GIT baixamos o script inicial de configuração de um servidor Debian padronizado pela Blue3, consultar documentação em https://github.com/samirhvbr/Linux-Start
+Arquivo README_blue3_script.md para entender o funcionamento do /root/blue3_script.sh
 
 ## Variaveis de Ajuste Rapido
 

@@ -1,6 +1,6 @@
 # 🚀 Blue3 Provisioning Script
 
-Script de pré-configuração automatizada para servidores Debian (Trixie/13), utilizado no provisionamento em ambientes de Data Center da Blue3.
+Script de pré-configuração automatizada para servidores Debian Trixie, utilizado no provisionamento em ambientes de Data Center da Blue3.
 
 ---
 
@@ -23,21 +23,22 @@ Automatizar a configuração inicial de servidores utilizando o phpIPAM como fon
 ---
 
 ## 🔄 Fluxo de Execução
-[ Boot Debian ]
-↓
-[ script.sh ]
-↓
-[ Rede bootstrap ]
-↓
-[ Input: hostname + domínio ]
-↓
-[ Consulta phpIPAM ]
-↓
-[ Aplicação da rede final ]
-↓
-[ Clone do repositório Linux-Start ]
-↓
-[ Provisionamento completo ]
+
+[ Boot Debian ] 
+↓ 
+[ script.sh ] 
+↓ 
+[ Rede bootstrap ] 
+↓ 
+[ Input: hostname + domínio ] 
+↓ 
+[ Consulta phpIPAM ] 
+↓ 
+[ Aplicação da rede final ] 
+↓ 
+[ Clone do repositório Linux-Start ] 
+↓ 
+[ Provisionamento completo ] 
 
 ---
 
@@ -76,14 +77,17 @@ As credenciais da API não devem ser armazenadas no script.
 
 ### Exemplo:
 
-IPAM_API=http://ipam.seudominio.local/api/SEU_APP_ID
-IPAM_TOKEN=SEU_TOKEN_AQUI
+IPAM_API=http://ipam.seudominio.local/api/SEU_APP_ID 
+
+IPAM_TOKEN=SEU_TOKEN_AQUI 
 
 
-# Execute o script após a instalação do sistema:
-bash script.sh
 
-O script solicitará:
+## Execute o script após a instalação do sistema:
+bash blue3_script.sh
+
+
+### O script solicitará:
 
 Hostname (ex: srv01)
 Domínio (default: b3.local)
